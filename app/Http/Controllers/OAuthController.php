@@ -116,7 +116,7 @@ class OAuthController extends Controller
     public function authenticate(Request $request, User $user): JsonResponse
     {
         $data = $request->validate([
-            'name' => 'required|string',
+            'name' => 'required|string|unique:users,name',
             'password' => 'required|min:6|confirmed',
         ]);
 
@@ -126,6 +126,35 @@ class OAuthController extends Controller
         ]);
 
         $token = Auth::login($user);
+
+        return $this->success([
+            'user' => $user,
+            'token' => $token
+        ]);
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     */
+    #[Post('/login')]
+    #[Operation(tags: ['OAuth'], method: 'POST')]
+    #[RequestBody(factory: UserRequestBody::class)]
+    #[Response(factory: UserResponse::class)]
+    public function login(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'name' => 'required|string',
+            'password' => 'required|min:6|confirmed',
+        ]);
+
+        $credentials = $request->only('name', 'password');
+
+        if (!$token = auth()->guard('api')->attempt($credentials)) {
+            return $this->error([], 'Unauthorized', 401);
+        }
+
+        $user = User::query()->firstWhere('name', $data['name']);
 
         return $this->success([
             'user' => $user,
