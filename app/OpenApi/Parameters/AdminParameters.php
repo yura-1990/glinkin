@@ -6,7 +6,7 @@ use GoldSpecDigital\ObjectOrientedOAS\Objects\Parameter;
 use GoldSpecDigital\ObjectOrientedOAS\Objects\Schema;
 use Vyuldashev\LaravelOpenApi\Factories\ParametersFactory;
 
-class NewsParameters extends ParametersFactory
+class AdminParameters extends ParametersFactory
 {
     /**
      * @return Parameter[]
@@ -16,10 +16,10 @@ class NewsParameters extends ParametersFactory
         return [
 
             Parameter::path()
-                ->name('news')
+                ->name('user')
                 ->description('Parameter description')
                 ->required(true)
-                ->schema(Schema::integer('news')),
+                ->schema(Schema::integer('user')),
 
         ];
     }
